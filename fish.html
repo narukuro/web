@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fish Follow Camera</title>
+<style>
+  body { margin:0; overflow:hidden; }
+  #webcam { position:fixed; top:0; left:0; width:100%; height:100%; object-fit:cover; }
+  #fish { position:absolute; font-size:48px; pointer-events:none; }
+  #canvas { display:none; }
+</style>
+</head>
+<body>
+<video id="webcam" autoplay playsinline></video>
+<canvas id="canvas"></canvas>
+<div id="fish">🐟</div>
+<script>
+(async function(){
+  const video = document.getElementById('webcam');
+  const canvas = document.getElementById('canvas');
+  const fish = document.getElementById('fish');
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({video:true});
+    video.srcObject = stream;
+  } catch(e){
+    alert('camera access error');
+    return;
+  }
+  const ctx = canvas.getContext('2d');
+  let width, height, prev;
+  video.addEventListener('loadedmetadata', () => {
+    width = canvas.width = video.videoWidth;
+    height = canvas.height = video.videoHeight;
+  });
+  function tick(){
+    if(width && height){
+      ctx.drawImage(video,0,0,width,height);
+      const data = ctx.getImageData(0,0,width,height).data;
+      if(prev){
+        let maxDiff=0, maxX=0, maxY=0;
+        for(let y=0;y<height;y+=20){
+          for(let x=0;x<width;x+=20){
+            const i=(y*width+x)*4;
+            const diff=Math.abs(data[i]-prev[i])+Math.abs(data[i+1]-prev[i+1])+Math.abs(data[i+2]-prev[i+2]);
+            if(diff>maxDiff){maxDiff=diff;maxX=x;maxY=y;}
+          }
+        }
+        fish.style.transform=`translate(${maxX}px,${maxY}px)`;
+      }
+      prev = new Uint8ClampedArray(data);
+    }
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+</script>
+</body>
+</html>

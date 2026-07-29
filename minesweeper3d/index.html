@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>MINE CUBE - 3Dマインスイーパー | Nulliro</title>
+<meta name="description" content="立方体をぐりぐり回しながら掘り進む3Dマインスイーパー。数字を頼りに、爆弾を避けてすべてのマスを解除しよう。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="MINE CUBE - 3Dマインスイーパー">
+<meta property="og:description" content="立方体をぐりぐり回しながら掘り進む3Dパズルゲーム">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💣</text></svg>">
+<link href="style.css" rel="stylesheet">
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three/three.module.min.js",
+    "three/addons/": "./vendor/three/addons/"
+  }
+}
+</script>
+</head>
+<body>
+
+<canvas id="scene"></canvas>
+
+<header class="hud hud-top">
+  <h1 class="logo">MINE<span>CUBE</span></h1>
+
+  <div class="hud-stats">
+    <div class="stat" title="残りの爆弾数">
+      <span class="stat-icon">💣</span>
+      <span id="mineCounter" class="stat-value">0</span>
+    </div>
+    <div class="stat" title="経過時間">
+      <span class="stat-icon">⏱</span>
+      <span id="timer" class="stat-value">0:00</span>
+    </div>
+  </div>
+
+  <div class="hud-actions">
+    <select id="difficulty" class="btn select" aria-label="難易度">
+      <option value="4">4×4×4 やさしい</option>
+      <option value="5" selected>5×5×5 ふつう</option>
+      <option value="6">6×6×6 むずかしい</option>
+    </select>
+    <button id="resetBtn" class="btn" title="新しいゲーム">↻ リセット</button>
+    <button id="helpBtn" class="btn" title="遊び方">?</button>
+  </div>
+</header>
+
+<div class="hud hud-bottom">
+  <div class="mode-toggle" role="group" aria-label="操作モード">
+    <button id="modeDig" class="mode-btn active" aria-pressed="true">⛏ 掘る</button>
+    <button id="modeFlag" class="mode-btn" aria-pressed="false">🚩 旗</button>
+  </div>
+  <p class="hint">ドラッグで回転 / ピンチ・ホイールで拡大縮小</p>
+</div>
+
+<!-- 結果モーダル -->
+<div id="resultModal" class="modal" hidden>
+  <div class="modal-card">
+    <p id="resultEmoji" class="result-emoji">🎉</p>
+    <h2 id="resultTitle">CLEAR!</h2>
+    <p id="resultText">全マス解除！</p>
+    <p id="resultBest" class="result-best"></p>
+    <button id="retryBtn" class="btn btn-primary">もう一回</button>
+  </div>
+</div>
+
+<!-- 遊び方モーダル -->
+<div id="helpModal" class="modal" hidden>
+  <div class="modal-card modal-help">
+    <h2>遊び方</h2>
+    <ul>
+      <li><strong>目的</strong> — 立方体の中に隠れた爆弾を避けて、爆弾以外のマスをすべて掘り抜く。</li>
+      <li><strong>数字</strong> — 掘ったマスに出る数字は、そのマスに接する周囲26マスに潜む爆弾の数。</li>
+      <li><strong>掘る</strong> — クリック / タップでマスを掘る。爆弾を掘ったらゲームオーバー。</li>
+      <li><strong>旗</strong> — 右クリック・長押し、または「🚩 旗」モードで怪しいマスに旗を立てる。</li>
+      <li><strong>回す</strong> — ドラッグで立方体を回転。掘った穴から中を覗き込みながら攻略しよう。</li>
+      <li><strong>安心</strong> — 最初の一掘りは必ず安全。</li>
+    </ul>
+    <button id="helpCloseBtn" class="btn btn-primary">はじめる</button>
+  </div>
+</div>
+
+<script type="module" src="main.js"></script>
+</body>
+</html>
